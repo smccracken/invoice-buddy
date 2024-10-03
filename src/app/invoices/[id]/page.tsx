@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm/expressions";
+import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { db } from "~/db";
 import { Invoices } from "~/db/schema";
@@ -12,9 +13,9 @@ export default async function InvoiceDetail({ params }: { params: { id: string }
     .where(eq(Invoices.id, invoiceId))
     .limit(1);
 
-  console.log(result);
   return (
     <main className="max-w-5xl mx-auto my-12">
+      <Link href="/invoices">Invoices</Link>
       <div className="flex flex-col justify-between">
         <h1 className="text-3xl font-bold flex items-center gap-4  mb-8">
           Invoice {invoiceId}

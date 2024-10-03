@@ -9,6 +9,11 @@ import { cn } from "~/lib/utils";
 
 export default async function InvoiceDetail({ params }: { params: { id: string } }) {
   const invoiceId = parseInt(params.id);
+
+  if (isNaN(invoiceId)) {
+    throw new Error('Invalid invoice ID');
+  }
+
   const [result] = await db.select()
     .from(Invoices)
     .where(eq(Invoices.id, invoiceId))

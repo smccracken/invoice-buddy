@@ -7,7 +7,8 @@ export async function createInvoice(formData: FormData) {
   const amount = Math.floor(parseFloat(String(formData.get('amount'))) * 100);
   const description = formData.get('description') as string;
 
-  const results = await db.insert(Invoices)
+  const results = await db
+    .insert(Invoices)
     .values({
       amount,
       description,

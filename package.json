@@ -18,10 +18,10 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.447.0",
-    "next": "14.2.14",
+    "next": "^15.0.0-canary.177",
     "pg": "^8.13.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^19.0.0-rc-459fd418-20241001",
+    "react-dom": "^19.0.0-rc-459fd418-20241001",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
   },

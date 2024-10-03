@@ -1,4 +1,5 @@
-import { eq } from 'drizzle-orm/expressions';
+import { auth } from '@clerk/nextjs/server';
+import { and, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '~/components/Container';
@@ -14,6 +15,9 @@ export default async function InvoiceDetail({
   params: { id: string };
 }) {
   const invoiceId = parseInt(params.id);
+  const { userId } = auth();
+
+  if (!userId) return;
 
   if (isNaN(invoiceId)) {
     throw new Error('Invalid invoice ID');
@@ -22,7 +26,7 @@ export default async function InvoiceDetail({
   const [result] = await db
     .select()
     .from(Invoices)
-    .where(eq(Invoices.id, invoiceId))
+    .where(and(eq(Invoices.id, invoiceId), eq(Invoices.userId, userId)))
     .limit(1);
 
   if (!result) notFound();

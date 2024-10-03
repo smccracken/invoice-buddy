@@ -14,11 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table"
+import { cn } from "~/lib/utils";
 
 
 export default async function Dashboard() {
   const results = await db.select().from(Invoices);
-  console.log(results);
+
   return (
     <main className="flex flex-col h-full text-center gap-6 max-w-5xl mx-auto my-12">
       <div className="flex justify-between">
@@ -47,7 +48,15 @@ export default async function Dashboard() {
               <TableCell className="text-left font-medium p-0"><Link href={`/invoices/${result.id}`} className="block font-semibold p-4"><time>{new Date(result.created_at).toLocaleDateString()}</time></Link></TableCell>
               <TableCell className="text-left p-0"><Link href={`/invoices/${result.id}`} className="block font-semibold p-4">Phillip J. Fry</Link></TableCell>
               <TableCell className="text-left p-0"><Link href={`/invoices/${result.id}`} className="block p-4">fry@example.com</Link></TableCell>
-              <TableCell className="text-center p-0"><Link href={`/invoices/${result.id}`} className="block p-4"><Badge className="rounded-full">{result.status}</Badge></Link></TableCell>
+              <TableCell className="text-center p-0"><Link href={`/invoices/${result.id}`} className="block p-4">
+                <Badge className={cn(
+                  "capitalize rounded-full",
+                  result.status === 'open' && 'bg-blue-500',
+                  result.status === 'paid' && 'bg-green-600',
+                  result.status === 'void' && 'bg-zinc-700',
+                  result.status === 'overdue' && 'bg-red-600',
+                )}>{result.status}</Badge>
+              </Link></TableCell>
               <TableCell className="text-right p-0"><Link href={`/invoices/${result.id}`} className="block font-semibold p-4">${(result.amount / 100).toFixed(2)}</Link></TableCell>
             </TableRow>
           })}

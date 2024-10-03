@@ -1,31 +1,30 @@
-import { sql } from 'drizzle-orm';
-import { db } from "~/db";
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs';
-
-import Link from "next/link";
-import { Button } from "~/components/ui/button";
+import Link from 'next/link';
+import Container from '~/components/Container';
+import { Button } from '~/components/ui/button';
 
 export default async function Home() {
-  return <>
-    <main className="flex flex-col justify-center h-full text-center gap-6 max-w-5xl mx-auto">
-      <h1 className="text-5xl font-bold">Invoice Buddy</h1>
-      <p>
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-        <Button asChild>
-          <Link href="/invoices">Invoices</Link>
-        </Button>
-      </p>
-    </main>
-  </>;
+  return (
+    <>
+      <main>
+        <Container className='flex flex-col justify-center h-full text-center gap-6'>
+          <h1 className='text-5xl font-bold'>Get That Bag 💰</h1>
+          <p className='flex gap-2 justify-center'>
+            <SignedIn>
+              <Button asChild>
+                <Link href='/invoices'>View Invoices</Link>
+              </Button>
+              <Button asChild>
+                <Link href='/invoices'>Create New Invoice</Link>
+              </Button>
+            </SignedIn>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+          </p>
+        </Container>
+      </main>
+    </>
+  );
 }

@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm/expressions";
 import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
@@ -12,6 +13,8 @@ export default async function InvoiceDetail({ params }: { params: { id: string }
     .from(Invoices)
     .where(eq(Invoices.id, invoiceId))
     .limit(1);
+
+  if (!result) notFound();
 
   return (
     <main className="max-w-5xl mx-auto my-12">

@@ -9,6 +9,19 @@ import { db } from '~/db';
 import { Invoices } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
+import { ChevronDown } from 'lucide-react';
+
+import { Button } from '~/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
+
+import { updateStatusAction } from '~/actions';
+import { AVAILABLE_STATUSES } from '~/data/invoices';
+
 export default async function InvoiceDetail({
   params,
 }: {
@@ -38,18 +51,50 @@ export default async function InvoiceDetail({
         <PageHeader>
           <h1 className='text-3xl font-bold flex items-center'>
             Invoice {invoiceId}
+            <Badge
+              className={cn(
+                'capitalize rounded-full',
+                result.status === 'open' && 'bg-blue-500',
+                result.status === 'paid' && 'bg-green-600',
+                result.status === 'void' && 'bg-zinc-700',
+                result.status === 'overdue' && 'bg-red-600'
+              )}
+            >
+              {result.status}
+            </Badge>
           </h1>
-          <Badge
-            className={cn(
-              'capitalize rounded-full',
-              result.status === 'open' && 'bg-blue-500',
-              result.status === 'paid' && 'bg-green-600',
-              result.status === 'void' && 'bg-zinc-700',
-              result.status === 'overdue' && 'bg-red-600'
-            )}
-          >
-            {result.status}
-          </Badge>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant='outline'
+                className='flex items-center gap-2'
+              >
+                Change Status
+                <ChevronDown className='h-auto w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {AVAILABLE_STATUSES.map((status) => {
+                return (
+                  <DropdownMenuItem key={status.id}>
+                    <form action={updateStatusAction}>
+                      <input
+                        type='hidden'
+                        name='id'
+                        value={invoiceId}
+                      />
+                      <input
+                        type='hidden'
+                        name='status'
+                        value={status.id}
+                      />
+                      <button>{status.label}</button>
+                    </form>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </PageHeader>
         <div className='flex flex-col justify-between'>
           <p className='text-3xl mb-3'>${(result.amount / 100).toFixed(2)}</p>

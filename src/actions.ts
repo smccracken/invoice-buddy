@@ -35,7 +35,7 @@ export async function updateStatusAction(formData: FormData) {
 
   if (!userId) return;
 
-  const results = await db
+  await db
     .update(Invoices)
     .set({ status })
     .where(and(eq(Invoices.id, id), eq(Invoices.userId, userId)));

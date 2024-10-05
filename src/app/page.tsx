@@ -16,7 +16,7 @@ export default async function Home() {
                 <Link href='/invoices'>View Invoices</Link>
               </Button>
               <Button asChild>
-                <Link href='/invoices'>Create New Invoice</Link>
+                <Link href='/invoices/new'>Create New Invoice</Link>
               </Button>
             </SignedIn>
             <SignedOut>

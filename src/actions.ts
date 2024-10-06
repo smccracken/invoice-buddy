@@ -1,13 +1,13 @@
 'use server';
 import { auth } from '@clerk/nextjs/server';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '~/db';
 import { Customers, Invoices, Status } from '~/db/schema';
 
 export async function createInvoice(formData: FormData) {
-  const { userId } = auth();
+  const { userId, orgId } = auth();
 
   if (!userId) return;
 
@@ -22,6 +22,7 @@ export async function createInvoice(formData: FormData) {
       name,
       email,
       userId,
+      organizationId: orgId || null,
     })
     .returning({
       id: Customers.id,
@@ -35,6 +36,7 @@ export async function createInvoice(formData: FormData) {
       userId,
       customerId: customer.id,
       status: 'open',
+      organizationId: orgId || null,
     })
     .returning({
       id: Invoices.id,
@@ -44,29 +46,54 @@ export async function createInvoice(formData: FormData) {
 }
 
 export async function updateStatusAction(formData: FormData) {
-  const { userId } = auth();
+  const { userId, orgId } = auth();
   const id = parseInt(formData.get('id') as string);
   const status = formData.get('status') as Status;
 
   if (!userId) return;
 
-  await db
-    .update(Invoices)
-    .set({ status })
-    .where(and(eq(Invoices.id, id), eq(Invoices.userId, userId)));
+  if (orgId) {
+    await db
+      .update(Invoices)
+      .set({ status })
+      .where(and(eq(Invoices.id, id), eq(Invoices.organizationId, orgId)));
+  } else {
+    await db
+      .update(Invoices)
+      .set({ status })
+      .where(
+        and(
+          eq(Invoices.id, id),
+          eq(Invoices.userId, userId),
+          isNull(Invoices.organizationId)
+        )
+      );
+  }
 
   revalidatePath('/invoices/${id}', 'page');
 }
 
 export async function deleteInvoiceAction(formData: FormData) {
-  const { userId } = auth();
+  const { userId, orgId } = auth();
   const id = parseInt(formData.get('id') as string);
 
   if (!userId) return;
 
-  await db
-    .delete(Invoices)
-    .where(and(eq(Invoices.id, id), eq(Invoices.userId, userId)));
+  if (orgId) {
+    await db
+      .delete(Invoices)
+      .where(and(eq(Invoices.id, id), eq(Invoices.organizationId, orgId)));
+  } else {
+    await db
+      .delete(Invoices)
+      .where(
+        and(
+          eq(Invoices.id, id),
+          eq(Invoices.userId, userId),
+          isNull(Invoices.organizationId)
+        )
+      );
+  }
 
   redirect('/invoices/');
 }

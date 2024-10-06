@@ -2,7 +2,7 @@ import { db } from '~/db';
 import { Customers, Invoices } from '~/db/schema';
 
 import { auth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { CirclePlus } from 'lucide-react';
 import Link from 'next/link';
 import Container from '~/components/Container';
@@ -21,14 +21,23 @@ import {
 import { cn } from '~/lib/utils';
 
 export default async function Dashboard() {
-  const { userId } = auth();
+  const { userId, orgId } = auth();
   if (!userId) return;
 
-  const results = await db
-    .select()
-    .from(Invoices)
-    .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
-    .where(eq(Invoices.userId, userId));
+  let results;
+  if (orgId) {
+    results = await db
+      .select()
+      .from(Invoices)
+      .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+      .where(eq(Invoices.organizationId, orgId));
+  } else {
+    results = await db
+      .select()
+      .from(Invoices)
+      .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+      .where(and(isNull(Invoices.organizationId), eq(Invoices.userId, userId)));
+  }
 
   const invoices = results.map(({ invoices, customers }) => {
     return {

@@ -24,6 +24,7 @@ export const Invoices = pgTable('invoices', {
   created_at: timestamp('created_at').notNull().defaultNow(),
   description: text('description'),
   userId: text('userId').notNull(),
+  organizationId: text('organizationId'),
   customerId: integer('customerId')
     .notNull()
     .references(() => Customers.id),
@@ -35,5 +36,6 @@ export const Customers = pgTable('customers', {
   created_at: timestamp('created_at').notNull().defaultNow(),
   name: text('name'),
   email: text('email'),
+  organizationId: text('organizationId'),
   userId: text('userId').notNull(),
 });

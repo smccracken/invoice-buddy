@@ -99,7 +99,7 @@ export default function Invoice({ invoice }: InvoiceProps) {
                           name='status'
                           value={status.id}
                         />
-                        <button>{status.label}</button>
+                        <button className='w-full'>{status.label}</button>
                       </form>
                     </DropdownMenuItem>
                   );

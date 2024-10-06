@@ -1,4 +1,5 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import Image from 'next/image';
 import Link from 'next/link';
 import Container from '~/components/Container';
 
@@ -10,10 +11,11 @@ const Header = () => {
           href='/'
           className='flex items-center gap-2'
         >
-          <img
+          <Image
             src='/logo.png'
             alt='Invoice Buddy Logo'
-            className='h-20 w-20'
+            width={40}
+            height={40}
           />
           <h1 className='font-bold text-2xl'>Invoice Buddy</h1>
         </Link>

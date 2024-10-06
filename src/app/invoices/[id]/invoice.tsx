@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Container from '~/components/Container';
 import PageHeader from '~/components/PageHeader';
 import { Badge } from '~/components/ui/badge';
-import { Invoices } from '~/db/schema';
+import { Customers, Invoices } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
 import { ChevronDown, Ellipsis, Trash2 } from 'lucide-react';
@@ -33,7 +33,9 @@ import { deleteInvoiceAction, updateStatusAction } from '~/actions';
 import { AVAILABLE_STATUSES } from '~/data/invoices';
 
 interface InvoiceProps {
-  invoice: typeof Invoices.$inferSelect;
+  invoice: typeof Invoices.$inferSelect & {
+    customer: typeof Customers.$inferSelect;
+  };
 }
 
 export default function Invoice({ invoice }: InvoiceProps) {
@@ -187,11 +189,13 @@ export default function Invoice({ invoice }: InvoiceProps) {
               <strong className='block w-28 flex-shrink-0 font-medium text-sm'>
                 Customer Name
               </strong>
+              <span>{invoice.customer.name}</span>
             </li>
             <li className='flex gap-4'>
               <strong className='block w-28 flex-shrink-0 font-medium text-sm'>
                 Customer Email
               </strong>
+              <span>{invoice.customer.email}</span>
             </li>
           </ul>
         </div>

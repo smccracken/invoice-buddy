@@ -4,14 +4,28 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '~/db';
-import { Invoices, Status } from '~/db/schema';
+import { Customers, Invoices, Status } from '~/db/schema';
 
 export async function createInvoice(formData: FormData) {
   const { userId } = auth();
-  const amount = Math.floor(parseFloat(String(formData.get('amount'))) * 100);
-  const description = formData.get('description') as string;
 
   if (!userId) return;
+
+  const amount = Math.floor(parseFloat(String(formData.get('amount'))) * 100);
+  const description = formData.get('description') as string;
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+
+  const [customer] = await db
+    .insert(Customers)
+    .values({
+      name,
+      email,
+      userId,
+    })
+    .returning({
+      id: Customers.id,
+    });
 
   const results = await db
     .insert(Invoices)
@@ -19,6 +33,7 @@ export async function createInvoice(formData: FormData) {
       amount,
       description,
       userId,
+      customerId: customer.id,
       status: 'open',
     })
     .returning({

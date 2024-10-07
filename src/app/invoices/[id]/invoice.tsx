@@ -8,7 +8,7 @@ import { Badge } from '~/components/ui/badge';
 import { Customers, Invoices } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
-import { ChevronDown, Ellipsis, Trash2 } from 'lucide-react';
+import { ChevronDown, CreditCard, Ellipsis, Trash2 } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -123,9 +123,18 @@ export default function Invoice({ invoice }: InvoiceProps) {
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
                     <DialogTrigger className='flex gap-2 items-center'>
-                      Delete Invoice
                       <Trash2 className='w-4 h-auto' />
+                      Delete Invoice
                     </DialogTrigger>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={`/invoices/${invoice.id}/payment`}
+                      className='flex gap-2 items-center'
+                    >
+                      <CreditCard className='w-4 h-auto' />
+                      Pay Invoice
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
